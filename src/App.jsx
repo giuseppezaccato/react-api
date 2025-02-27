@@ -8,7 +8,7 @@ import axios from "axios";
 function App() {
 
   //task (import.meta.env) => importo le variabili d'ambiente dal'oggetto import.meta
-  // const apiUrl = import.meta.env.VITE_BASE_API_URL;
+  // const apiUrl = import.meta.env.VITE_BASE_API_URL; //? capire perchè non funziona!
 
   //task setting array vuoto reattivo
   const [posts, setPosts] = useState([]);
@@ -53,11 +53,49 @@ function App() {
       .catch((err) => console.error(err));
   };
 
+  //task funzione di gestione dati da form (handleData)
+
+  const handleData = (event) => {
+    //task scompongo l'oggetto event.target 
+    //task (dinamicamente recupera dal campo a sua volta un altro oggetto) 
+    //task  name(il nome della chiave) e value(il valore della chiave)
+
+    //* destructuring
+    const { name, value } = event.target
+
+    // //task trasformo il text da stringa in input ad array in output (con lo split!)
+    // [name] == "tags"
+    //   ? setDataForm({ ...dataForm, [name]: value.split(",").map(e => e.trim()) })
+    //   //task ALTRIMENTI raccolgo solo il value corrispondente alla chiave di event.target.name
+    //   : setDataForm({ ...dataForm, [name]: value })
+
+    if ([name] == "tags") {
+      setDataForm({
+        ...dataForm, [name]: value.split(',').map((e) => e.trim())
+      })
+    } else {
+      setDataForm({
+        ...dataForm, [name]: value,
+      })
+
+    }
+
+  }
 
 
+  //task gestione dati all'onSubmit del Form
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
+    axios
+      .post("http://localhost:3000/api/posts", dataForm)
+      .then(
+        fetchPosts()
+      )
+      .catch((err) => console.log(err));
 
-
+    // setDataForm(emptyDataForm);
+  };
 
 
   //Task useEffect al caricamento della pagina con chiamata api che modifica direttamente l'array reattivo [posts]
@@ -109,6 +147,59 @@ function App() {
           </tbody>
         </table>
       </div>
+
+      <form onSubmit={handleSubmit} >
+
+        <div className="input-group p-3 ">
+
+          <span className=" input-group-text" for="titolo">Titolo</span>
+          <input
+            type="text"
+            className="me-2 form-control "
+            name="titolo"
+            onChange={handleData}
+            value={dataForm.titolo}
+          />
+
+          <span className=" input-group-text" for="contenuto">Contenuto</span>
+          <input
+            type="text"
+            className="me-2 form-control "
+            name="contenuto"
+            onChange={handleData}
+            value={dataForm.contenuto}
+          />
+
+          <span className=" input-group-text" for="tags">Immagine</span>
+          <input
+            type="text"
+            className="me-2  form-control "
+            name="immagine"
+            onChange={handleData}
+            value={dataForm.immagine}
+          />
+
+          <span className=" input-group-text" id="tags">Tags</span>
+          <input
+            type="text"
+            className="me-2  form-control "
+            name="tags"
+            onChange={handleData}
+            value={dataForm.tags}
+          />
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+          >
+            aggiungi
+          </button>
+
+        </div>
+
+      </form >
+
+
 
 
     </>
