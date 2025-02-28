@@ -8,7 +8,7 @@ import axios from "axios";
 function App() {
 
   //task (import.meta.env) => importo le variabili d'ambiente dal'oggetto import.meta
-  // const apiUrl = import.meta.env.VITE_BASE_API_URL; //? capire perchè non funziona!
+  const apiUrl = import.meta.env.VITE_BASE_API_URL;
 
   //task setting array vuoto reattivo
   const [posts, setPosts] = useState([]);
@@ -27,7 +27,7 @@ function App() {
   // task funzione (api axios) {run terminal first => "npm i axios"} 
   //? piu comodo come metodo perchè incorpora il json parse, e strumenti aggiuntivi di sicurezza
   function fetchPosts() {
-    axios.get("http://localhost:3000/api/posts")
+    axios.get(apiUrl)
       .then((res) => setPosts(res.data))
       .catch((err) => console.error(err));
   }
@@ -36,7 +36,7 @@ function App() {
 
   //task funzione GET (api fetch)
   // const fetchPosts = () => {
-  //   fetch("http://localhost:3000/api/posts")
+  //   fetch(apiUrl)
   //     .then((res) => res.json())
   //     .then(setPosts)
   //     .catch((err) => console.error(err));
@@ -45,7 +45,7 @@ function App() {
   //task funzione delete post(id elemento da eliminare)
   const handleDeletePost = (idPDaEliminare) => {
 
-    axios.delete(`${"http://localhost:3000/api/posts"}/${idPDaEliminare}`)
+    axios.delete(`${apiUrl}/${idPDaEliminare}`)
       .then(
         setPosts(posts.filter(p => p.id !== idPDaEliminare))
         // (() => fetchPosts())
@@ -63,8 +63,8 @@ function App() {
     //* destructuring
     const { name, value } = event.target
 
-    // //task trasformo il text da stringa in input ad array in output (con lo split!)
-    // [name] == "tags"
+    //   //task trasformo il text da stringa in input ad array in output (con lo split!)
+    // ([name] == "tags")
     //   ? setDataForm({ ...dataForm, [name]: value.split(",").map(e => e.trim()) })
     //   //task ALTRIMENTI raccolgo solo il value corrispondente alla chiave di event.target.name
     //   : setDataForm({ ...dataForm, [name]: value })
@@ -88,13 +88,13 @@ function App() {
     event.preventDefault();
 
     axios
-      .post("http://localhost:3000/api/posts", dataForm)
+      .post(apiUrl, dataForm)
       .then(
         fetchPosts()
       )
       .catch((err) => console.log(err));
 
-    // setDataForm(emptyDataForm);
+    // setDataForm(emptyDataForm);//? non funziona, se tolgo commento i valori di input diventano undefined e si rompe TUTTO! -.-
   };
 
 
@@ -159,6 +159,7 @@ function App() {
             name="titolo"
             onChange={handleData}
             value={dataForm.titolo}
+            required
           />
 
           <span className=" input-group-text" for="contenuto">Contenuto</span>
@@ -168,6 +169,7 @@ function App() {
             name="contenuto"
             onChange={handleData}
             value={dataForm.contenuto}
+            required
           />
 
           <span className=" input-group-text" for="tags">Immagine</span>
@@ -177,6 +179,7 @@ function App() {
             name="immagine"
             onChange={handleData}
             value={dataForm.immagine}
+            required
           />
 
           <span className=" input-group-text" id="tags">Tags</span>
@@ -186,6 +189,7 @@ function App() {
             name="tags"
             onChange={handleData}
             value={dataForm.tags}
+            required
           />
 
           <button
